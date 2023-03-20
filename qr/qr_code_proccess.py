@@ -15,7 +15,7 @@ async def generate_qr_code(user_id: str):
     )
 
     # Construct the URL with the user ID
-    url = f"http://localhost:8000/user/{user_id}"
+    url = f"https://daglarapp.ey.r.appspot.com/user/{user_id}"
     qr_code.add_data(url)
     qr_code.make(fit=True)
 
