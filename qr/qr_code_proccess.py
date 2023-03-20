@@ -13,7 +13,10 @@ async def generate_qr_code(user_id: str):
         border=4,
         image_factory=qr_factory
     )
-    qr_code.add_data(user_id)
+
+    # Construct the URL with the user ID
+    url = f"http://localhost:8000/user/{user_id}"
+    qr_code.add_data(url)
     qr_code.make(fit=True)
 
     img = qr_code.make_image(fill_color="black", back_color="white")
@@ -27,3 +30,4 @@ async def generate_qr_code(user_id: str):
     buffer.close()
 
     return qr_code_url
+
