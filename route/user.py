@@ -1,7 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from io import BytesIO
+
+from fastapi import APIRouter, HTTPException, UploadFile
 from firebase_admin import db
 
 from auth.config import users_ref
+from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
 router = APIRouter()
 
@@ -13,9 +16,13 @@ async def get_user(userId: str):
     user_data = list(query.values())[0]
 
     if user_data:
-        return {"photo":user_data.get('photo'),"message": user_data.get("messages"), "phone": user_data.get("phone"), "carPlate":user_data.get('carPlate')}
+        return {"photo": user_data.get('photo'), "message": user_data.get("messages"), "phone": user_data.get("phone"),
+                "carPlate": user_data.get('carPlate')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
 
-
+@router.post("/users/add/avatar/{userId}")
+async def add_avatar_api(userId: str, file: UploadFile):
+    url = f'user/{userId}/{file.filename}'
+    return upload_to_gcs(url,file.file)
