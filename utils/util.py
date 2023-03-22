@@ -2,16 +2,6 @@ from fastapi import HTTPException
 from firebase_admin import auth
 import random
 import string
-from io import BytesIO
-from reportlab.lib.pagesizes import letter, landscape
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image
-import requests
-from reportlab.lib.units import inch
-from storage.firebase_storage import upload_to_firebase_storage
-from auth.config import bucket
-import datetime
-import re
 
 
 async def set_custom_claims(uid, role):

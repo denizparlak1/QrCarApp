@@ -42,13 +42,13 @@ async def bulk_register_users(request: BulkRegisterRequest):
         return JSONResponse(status_code=400, content={"detail": "Count must be between 1 and 200"})
 
     user_data_list = []
-
     for _ in range(request.count):
         email, password = generate_random_email_password()
         try:
             new_user = auth.create_user(email=email, password=password)
             await set_custom_claims(new_user.uid, request.role)
             qr_code_file = await generate_qr_code(new_user.uid)
+
             user_data = {
                 "email": email,
                 "userId": new_user.uid,
