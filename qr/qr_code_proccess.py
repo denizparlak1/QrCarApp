@@ -26,7 +26,7 @@ async def generate_qr_code(user_id: str):
     img.save(buffer)
     buffer.seek(0)
 
-    qr_code_url = upload_to_firebase_storage(buffer, file_name)
+    qr_code_url = upload_to_firebase_storage("qr_codes",buffer, file_name)
     buffer.close()
 
     return qr_code_url
