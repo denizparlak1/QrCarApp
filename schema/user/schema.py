@@ -19,3 +19,7 @@ class UpdateUserEmail(BaseUpdateUser):
 
 class UpdateUserPassword(BaseUpdateUser):
     password: str
+
+
+class UpdateUserPlate(BaseUpdateUser):
+    plate: str

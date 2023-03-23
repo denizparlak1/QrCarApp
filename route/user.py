@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, UploadFile
 
 from firebase_admin import auth
 from auth.config import users_ref
-from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail
+from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate
 from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
 router = APIRouter()
@@ -15,8 +15,8 @@ async def get_user(userId: str):
     user_data = list(query.values())[0]
 
     if user_data:
-        return {"photo": user_data.get('photo'), "message": user_data.get("messages"), "phone": user_data.get("phone"),
-                "carPlate": user_data.get('carPlate')}
+        return {"photo": user_data.get('photo'), "message": user_data.get("message"), "phone": user_data.get("phone"),
+                "plate": user_data.get('car_plate')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -30,7 +30,7 @@ async def add_avatar_api(userId: str, file: UploadFile):
 @router.put("/user/update/message/")
 async def update_message_api(user: UpdateUserMessage):
     try:
-        users_ref.child(user.user_id).update({"message": user.message})
+        users_ref.child(user.user_id).update({"messages": user.message})
         return {"message": "Mesajınız Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -62,5 +62,14 @@ async def update_password_api(user: UpdateUserPassword):
         # Update the user's email in Firebase Authentication
         auth.update_user(user.user_id, password=user.password)
         return {"detail": "Şifre Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/user/update/plate/")
+async def update_plate_api(user: UpdateUserPlate):
+    try:
+        users_ref.child(user.user_id).update({"carPlate": user.plate})
+        return {"message": "Araç Plakanız Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
