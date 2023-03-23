@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, HTTPException
 from firebase_admin import auth
 from fastapi.responses import JSONResponse
@@ -24,8 +26,10 @@ async def register_user(user: UserRegistration):
             "email": user.email,
             "userId": new_user.uid,
             "qr_code_file": qr_code_file,
-            "messages": "",
-            "phone": ""
+            "message": "Kahve almaya çıktım 10 dakikaya döneceğim",
+            "phone": "XXX XXX XXXX",
+            "car_plate":"123 TC 123",
+            "photo":os.environ['AVATAR']
         }
 
         # Set data in the Realtime Database
