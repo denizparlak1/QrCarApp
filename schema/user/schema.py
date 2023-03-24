@@ -5,6 +5,10 @@ class BaseUpdateUser(BaseModel):
     user_id: str
 
 
+class UpdateUserPassword(BaseUpdateUser):
+    password: str
+
+
 class UpdateUserPhone(BaseUpdateUser):
     phone: str
 
@@ -15,10 +19,6 @@ class UpdateUserMessage(BaseUpdateUser):
 
 class UpdateUserEmail(BaseUpdateUser):
     email: str
-
-
-class UpdateUserPassword(BaseUpdateUser):
-    password: str
 
 
 class UpdateUserPlate(BaseUpdateUser):
