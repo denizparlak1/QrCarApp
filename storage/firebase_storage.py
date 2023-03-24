@@ -14,12 +14,12 @@ def upload_to_firebase_storage(qr_codes,buffer, file_name):
         raise f"Error uploading to Firebase Storage: {e}"
 
 
-def upload_to_gcs(url,file,userId):
+def upload_to_gcs(url, file, userId):
     try:
         blob = bucket.blob(url)
         blob.upload_from_file(file)
 
-        blob.acl.user('allUsers').grant_read()
+        blob.acl.all().grant_read()  # Update this line
         blob.acl.save()
         # Get the public URL of the QR code image
         public = blob.public_url
@@ -27,5 +27,6 @@ def upload_to_gcs(url,file,userId):
         return public
     except Exception as e:
         raise e
+
 
 
