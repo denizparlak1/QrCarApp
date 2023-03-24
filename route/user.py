@@ -17,8 +17,8 @@ async def get_user(userId: str):
     user_data = list(query.values())[0]
 
     if user_data:
-        return {"photo": user_data.get('photo'), "message": user_data.get("message"), "phone": user_data.get("phone"),
-                "plate": user_data.get('car_plate')}
+        return {"mail":user_data.get('email'),"photo": user_data.get('photo'), "message": user_data.get("message"), "phone": user_data.get("phone"),
+                "plate": user_data.get('car_plate'),"qr":user_data.get('qr_code_file')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
