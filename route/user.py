@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from fastapi import APIRouter, HTTPException, UploadFile
 
 from firebase_admin import auth
@@ -23,7 +25,8 @@ async def get_user(userId: str):
 
 @router.put("/users/add/avatar/{userId}")
 async def add_avatar_api(userId: str, file: UploadFile):
-    url = f'user/{userId}/{file.filename}'
+    unique_id = uuid4()
+    url = f'user/{userId}/{unique_id}_{file.filename}'
     return upload_to_gcs(url, file.file,userId)
 
 
