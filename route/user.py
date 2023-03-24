@@ -33,7 +33,7 @@ async def add_avatar_api(userId: str, file: UploadFile):
 @router.put("/user/update/message/")
 async def update_message_api(user: UpdateUserMessage):
     try:
-        users_ref.child(user.user_id).update({"messages": user.message})
+        users_ref.child(user.user_id).update({"message": user.message})
         return {"message": "Mesajınız Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -72,7 +72,7 @@ async def update_password_api(user: UpdateUserPassword):
 @router.put("/user/update/plate/")
 async def update_plate_api(user: UpdateUserPlate):
     try:
-        users_ref.child(user.user_id).update({"carPlate": user.plate})
+        users_ref.child(user.user_id).update({"car_plate": user.plate})
         return {"message": "Araç Plakanız Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
