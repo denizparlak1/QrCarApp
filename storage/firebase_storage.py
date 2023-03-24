@@ -1,4 +1,4 @@
-from auth.config import bucket
+from auth.config import bucket, users_ref
 
 
 def upload_to_firebase_storage(qr_codes,buffer, file_name):
@@ -14,14 +14,14 @@ def upload_to_firebase_storage(qr_codes,buffer, file_name):
         raise f"Error uploading to Firebase Storage: {e}"
 
 
-def upload_to_gcs(url,file):
+def upload_to_gcs(url,file,userId):
     try:
         blob = bucket.blob(url)
         blob.upload_from_file(file)
 
         # Get the public URL of the QR code image
         public = blob.public_url
-
+        users_ref.child(userId).update({"photo": public})
         return public
     except Exception as e:
         raise e

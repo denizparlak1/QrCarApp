@@ -21,10 +21,10 @@ async def get_user(userId: str):
         raise HTTPException(status_code=404, detail="User not found")
 
 
-@router.post("/users/add/avatar/{userId}")
+@router.put("/users/add/avatar/{userId}")
 async def add_avatar_api(userId: str, file: UploadFile):
     url = f'user/{userId}/{file.filename}'
-    return upload_to_gcs(url, file.file)
+    return upload_to_gcs(url, file.file,userId)
 
 
 @router.put("/user/update/message/")
