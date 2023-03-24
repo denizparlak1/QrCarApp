@@ -19,6 +19,8 @@ def upload_to_gcs(url,file,userId):
         blob = bucket.blob(url)
         blob.upload_from_file(file)
 
+        blob.acl.user('allUsers').grant_read()
+        blob.acl.save()
         # Get the public URL of the QR code image
         public = blob.public_url
         users_ref.child(userId).update({"photo": public})
