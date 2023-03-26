@@ -23,3 +23,7 @@ class UpdateUserEmail(BaseUpdateUser):
 
 class UpdateUserPlate(BaseUpdateUser):
     plate: str
+
+
+class UpdateUserTelegram(BaseUpdateUser):
+    telegram: str
