@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, UploadFile
 from firebase_admin import auth
 from auth.config import users_ref
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
-    UpdateUserTelegram, UpdateUserTelegramPermission
+    UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserWhatsappPermission
 from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
 router = APIRouter()
@@ -18,8 +18,12 @@ async def get_user(userId: str):
     user_data = list(query.values())[0]
 
     if user_data:
-        return {"mail":user_data.get('email'),"photo": user_data.get('photo'), "message": user_data.get("message"), "phone": user_data.get("phone"),
-                "plate": user_data.get('car_plate'),"qr":user_data.get('qr_code_file'),"telegram": user_data.get('telegram')}
+        return {"mail": user_data.get('email'), "photo": user_data.get('photo'), "message": user_data.get("message"),
+                "phone": user_data.get("phone"),
+                "plate": user_data.get('car_plate'), "qr": user_data.get('qr_code_file'),
+                "telegram": user_data.get('telegram'),
+                'telegram_permission':user_data.get('telegram_permission'),
+                'whatsapp_permission':user_data.get('whatsapp_permission')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -28,7 +32,7 @@ async def get_user(userId: str):
 async def add_avatar_api(userId: str, file: UploadFile):
     unique_id = uuid4()
     url = f'user/{userId}/{unique_id}_{file.filename}'
-    return upload_to_gcs(url, file.file,userId)
+    return upload_to_gcs(url, file.file, userId)
 
 
 @router.put("/user/update/message/")
@@ -96,3 +100,11 @@ async def update_telegram_permission_api(user: UpdateUserTelegramPermission):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
+@router.put("/user/update/whatsapp/permission/")
+async def update_whatsapp_permission_api(user: UpdateUserWhatsappPermission):
+    try:
+        users_ref.child(user.user_id).update({"whatsapp_permission": user.permission})
+        return {"message": "Whatsapp İzni Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
