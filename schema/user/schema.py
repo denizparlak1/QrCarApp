@@ -27,3 +27,7 @@ class UpdateUserPlate(BaseUpdateUser):
 
 class UpdateUserTelegram(BaseUpdateUser):
     telegram: str
+
+
+class UpdateUserTelegramPermission(BaseUpdateUser):
+    permission: bool
