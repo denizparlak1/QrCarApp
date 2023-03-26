@@ -31,3 +31,7 @@ class UpdateUserTelegram(BaseUpdateUser):
 
 class UpdateUserTelegramPermission(BaseUpdateUser):
     permission: bool
+
+
+class UpdateUserWhatsappPermission(BaseUpdateUser):
+    permission: bool
