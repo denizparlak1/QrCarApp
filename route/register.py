@@ -29,7 +29,8 @@ async def register_user(user: UserRegistration):
             "message": "Kahve almaya çıktım 10 dakikaya döneceğim",
             "phone": "XXX XXX XXXX",
             "car_plate":"123 TC 123",
-            "photo":os.environ['AVATAR']
+            "photo":os.environ['AVATAR'],
+            "telegram":""
         }
 
         # Set data in the Realtime Database
