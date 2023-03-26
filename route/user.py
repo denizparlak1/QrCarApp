@@ -4,7 +4,8 @@ from fastapi import APIRouter, HTTPException, UploadFile
 
 from firebase_admin import auth
 from auth.config import users_ref
-from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate
+from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
+    UpdateUserTelegram
 from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
 router = APIRouter()
@@ -76,3 +77,13 @@ async def update_plate_api(user: UpdateUserPlate):
         return {"message": "Araç Plakanız Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/user/update/telegram/")
+async def update_telegram_api(user: UpdateUserTelegram):
+    try:
+        users_ref.child(user.user_id).update({"telegram": user.telegram})
+        return {"message": "Telegram Kullanıcı İsmi Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
