@@ -23,7 +23,8 @@ async def get_user(userId: str):
                 "plate": user_data.get('car_plate'), "qr": user_data.get('qr_code_file'),
                 "telegram": user_data.get('telegram'),
                 'telegram_permission':user_data.get('telegram_permission'),
-                'whatsapp_permission':user_data.get('whatsapp_permission')}
+                'whatsapp_permission':user_data.get('whatsapp_permission'),
+                'phone_permission':user_data.get('phone_permission')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
