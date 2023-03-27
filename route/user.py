@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, UploadFile
 from firebase_admin import auth
 from auth.config import users_ref
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
-    UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserWhatsappPermission
+    UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserPhonePermission, UpdateUserWhatsappPermission
 from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
 router = APIRouter()
@@ -106,5 +106,14 @@ async def update_whatsapp_permission_api(user: UpdateUserWhatsappPermission):
     try:
         users_ref.child(user.user_id).update({"whatsapp_permission": user.permission})
         return {"message": "Whatsapp İzni Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/user/update/phone/permission/")
+async def update_phone_permission_api(user: UpdateUserPhonePermission):
+    try:
+        users_ref.child(user.user_id).update({"phone_permission": user.permission})
+        return {"message": "Telefon Arama İzni Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
