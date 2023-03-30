@@ -8,7 +8,8 @@ app = FastAPI()
 origins = [
     #"https://daglarapp.ey.r.appspot.com",
     #"https://qrcarapp-akzshgayzq-uc.a.run.app"
-    "http://qrpark.com.tr"
+    "http://qrpark.com.tr",
+    "https://qrpark.com.tr"
 ]
 
 app.add_middleware(
