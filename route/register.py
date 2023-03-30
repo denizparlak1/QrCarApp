@@ -30,7 +30,10 @@ async def register_user(user: UserRegistration):
             "phone": "XXX XXX XXXX",
             "car_plate":"123 TC 123",
             "photo":os.environ['AVATAR'],
-            "telegram":""
+            "telegram":"@username",
+            "telegram_permission":True,
+            "whatsapp_permission": True,
+            "phone_permission":True
         }
 
         # Set data in the Realtime Database
