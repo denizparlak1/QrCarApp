@@ -6,7 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "https://qrpark.com.tr"
+    "https://qrpark.com.tr",
+    "https://www.qrpark.com.tr"
 ]
 
 app.add_middleware(
