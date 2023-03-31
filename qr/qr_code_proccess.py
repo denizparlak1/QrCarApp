@@ -31,3 +31,5 @@ async def generate_qr_code(user_id: str):
 
     return qr_code_url
 
+
+
