@@ -5,7 +5,8 @@ from fastapi import APIRouter, HTTPException, UploadFile
 from firebase_admin import auth
 from auth.config import users_ref
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
-    UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserPhonePermission, UpdateUserWhatsappPermission
+    UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserPhonePermission, UpdateUserWhatsappPermission, \
+    BaseUpdateUser
 from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
 router = APIRouter()
@@ -22,9 +23,10 @@ async def get_user(userId: str):
                 "phone": user_data.get("phone"),
                 "plate": user_data.get('car_plate'), "qr": user_data.get('qr_code_file'),
                 "telegram": user_data.get('telegram'),
-                'telegram_permission':user_data.get('telegram_permission'),
-                'whatsapp_permission':user_data.get('whatsapp_permission'),
-                'phone_permission':user_data.get('phone_permission')}
+                'telegram_permission': user_data.get('telegram_permission'),
+                'whatsapp_permission': user_data.get('whatsapp_permission'),
+                'phone_permission': user_data.get('phone_permission'),
+                'first_login': user_data.get('first_login')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -116,5 +118,14 @@ async def update_phone_permission_api(user: UpdateUserPhonePermission):
     try:
         users_ref.child(user.user_id).update({"phone_permission": user.permission})
         return {"message": "Telefon Arama İzni Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/user/update/login/permission/")
+async def update_user_login_permission_api(user: BaseUpdateUser):
+    try:
+        users_ref.child(user.user_id).update({"first_login": False})
+        return {"message": "Kayıt İşlemi Tamamlandı"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
