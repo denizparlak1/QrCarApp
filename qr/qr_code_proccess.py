@@ -4,7 +4,7 @@ from io import BytesIO
 from storage.firebase_storage import upload_to_firebase_storage
 
 
-async def generate_qr_code(user_id: str):
+async def generate_qr_code(user_id: str,bucket):
     qr_factory = qrcode.image.svg.SvgImage
     qr_code = qrcode.QRCode(
         version=1,
@@ -15,7 +15,7 @@ async def generate_qr_code(user_id: str):
     )
 
     # Construct the URL with the user ID
-    url = f"qrpark.com.tr/user/{user_id}"
+    url = f"https://qrpark.com.tr/user/{user_id}"
     qr_code.add_data(url)
     qr_code.make(fit=True)
 
@@ -26,7 +26,7 @@ async def generate_qr_code(user_id: str):
     img.save(buffer)
     buffer.seek(0)
 
-    qr_code_url = upload_to_firebase_storage("qr_codes",buffer, file_name)
+    qr_code_url = upload_to_firebase_storage(f"qr_codes/{bucket}",buffer, file_name)
     buffer.close()
 
     return qr_code_url
