@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Response, HTTPException
 from starlette.responses import StreamingResponse
-
 from auth.config import bucket
 
 router = APIRouter()
