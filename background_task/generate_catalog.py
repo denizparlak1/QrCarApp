@@ -1,23 +1,22 @@
 import asyncio
 import os
-
 from fastapi import HTTPException
-
+from firebase_admin import auth
 from auth.config import users_ref
 from mail.postmark import send_email_with_qr_code
 from pdf.generate_pdf import generate_svg
 from qr.qr_code_proccess import generate_qr_code
-from schema.firebase.UserRegistration import BulkRegisterRequest
-from utils.util import generate_random_email_password, set_custom_claims
-from firebase_admin import auth
+from schema.firebase.UserRegistration import UserRegistration, BulkRegisterRequest
+from utils.util import set_custom_claims, generate_random_email_password
 
 
 async def create_single_user(request):
     email, password = generate_random_email_password()
     try:
+        customer = request.customer.replace(" ","_")
         new_user = auth.create_user(email=email, password=password)
         await set_custom_claims(new_user.uid, request.role)
-        qr_code_file = await generate_qr_code(new_user.uid, request.customer)
+        qr_code_file = await generate_qr_code(new_user.uid, customer)
 
         user_data = {
             "email": email,

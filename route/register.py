@@ -1,3 +1,4 @@
+import asyncio
 import os
 from fastapi import BackgroundTasks
 from fastapi import APIRouter, HTTPException
@@ -5,6 +6,8 @@ from firebase_admin import auth
 from fastapi.responses import JSONResponse
 from auth.config import users_ref
 from background_task.generate_catalog import perform_background_tasks
+from mail.postmark import send_email_with_qr_code
+from pdf.generate_pdf import generate_svg
 from qr.qr_code_proccess import generate_qr_code
 from schema.firebase.UserRegistration import UserRegistration, BulkRegisterRequest
 from utils.util import set_custom_claims, generate_random_email_password
@@ -21,7 +24,7 @@ async def register_user(user: UserRegistration):
         )
 
         await set_custom_claims(new_user.uid, user.role)
-        qr_code_file = await generate_qr_code(new_user.uid,user.customer)
+        qr_code_file = await generate_qr_code(new_user.uid, user.customer)
         user_data = {
             "email": user.email,
             "userId": new_user.uid,
@@ -43,6 +46,8 @@ async def register_user(user: UserRegistration):
         return True
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
 
 
 @router.post("/bulk_register/")

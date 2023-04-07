@@ -49,6 +49,7 @@ async def insert_qr_code_into_svg_template(svg_template_content, qr_code_url):
 
 
 async def generate_svg(user_data_list, customer):
+    customer = customer.replace(" ", "_")
     async with AsyncClient() as client:
         html_template = '''
             <html>
