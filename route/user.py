@@ -130,3 +130,21 @@ async def update_user_login_permission_api(user: BaseUpdateUser):
         return {"message": "Kayıt İşlemi Tamamlandı"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+
+@router.delete("/users/delete/")
+async def delete_all_users():
+    # Fetch all users
+    users = []
+    page = auth.list_users()
+    while page:
+        for user in page.users:
+            users.append(user)
+        page = page.get_next_page()
+
+    # Delete all users
+    for user in users:
+        auth.delete_user(user.uid)
+
+    return {"message": f"Deleted {len(users)} users."}
