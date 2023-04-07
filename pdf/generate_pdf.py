@@ -121,13 +121,8 @@ async def generate_svg(user_data_list, customer):
                 if (i + 1) % (items_per_line * max_rows) == 0:
                     y_offset = 0
 
-        # Save the combined SVG content to a file
-        with open("output.svg", "w") as f:
-            f.write(str(combined_svg))
+        blob = bucket.blob(f"catalogs/{customer}_catalog.svg")
+        blob.upload_from_string(str(combined_svg), content_type="image/svg+xml", predefined_acl="publicRead")
+        svg_url = blob.public_url
 
-        blob = bucket.blob(f"catalogs/{customer}_catalog.html")
-        blob.upload_from_string(combined_html, content_type="text/html", predefined_acl="publicRead")
-
-        # Return the catalog URL
-        catalog_url = blob.public_url
-        return catalog_url
+        return svg_url

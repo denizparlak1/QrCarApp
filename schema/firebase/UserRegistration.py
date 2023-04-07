@@ -5,6 +5,7 @@ class UserRegistration(BaseModel):
     email: str
     password: str
     role: str
+    customer:str
 
 
 class BulkRegisterRequest(BaseModel):
