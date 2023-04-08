@@ -16,6 +16,7 @@ async def generate_qr_code(user_id: str,bucket):
 
     # Construct the URL with the user ID
     url = f"https://qrpark.com.tr/user/{user_id}"
+
     qr_code.add_data(url)
     qr_code.make(fit=True)
 

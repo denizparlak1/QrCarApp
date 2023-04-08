@@ -56,7 +56,6 @@ async def convert_html_to_png(html_content):
         with open("output.png", "wb") as png_file:
             png_file.write(response.content)
 
-        print("The PNG file has been saved as 'output.png'")
 
 
 
