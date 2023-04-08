@@ -39,8 +39,6 @@ async def convert_html_to_png_example(html_content):
 
     # Check for errors
     if response.status_code != 201:
-        print(f"Error: {response.status_code}")
-        print(f"Response content: {response.content}")
         return None
 
     # Get task ID
@@ -58,7 +56,6 @@ async def convert_html_to_png_example(html_content):
             if status == "finished":
                 break
             elif status == "error":
-                print("Error during conversion")
                 return None
             else:
                 await asyncio.sleep(5)
@@ -76,4 +73,3 @@ async def convert_html_to_png_example(html_content):
     with open("output.png", "wb") as output_file:
         output_file.write(response.content)
 
-    print("Conversion successful. Saved as output.png")

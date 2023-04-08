@@ -12,3 +12,4 @@ class BulkRegisterRequest(BaseModel):
     customer: str
     count: int
     role: str
+    cycle:int

@@ -1,14 +1,10 @@
 import re
 import datetime
-
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
 from auth.config import bucket
 from lxml import etree
 import httpx
-
-import imgkit
-
 
 
 def extract_object_name(url: str) -> str:
@@ -87,7 +83,6 @@ async def generate_svg(user_data_list, customer):
 
         combined_html = html_template.format("".join(svg_elements))
 
-
         soup = BeautifulSoup(combined_html, "html.parser")
 
         # Extract all the SVG elements
@@ -122,7 +117,11 @@ async def generate_svg(user_data_list, customer):
                 if (i + 1) % (items_per_line * max_rows) == 0:
                     y_offset = 0
 
-        blob = bucket.blob(f"catalogs/{customer}_catalog.svg")
+        timestamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S%f")
+        unique_svg_filename = f"catalogs/{customer}_catalog_{timestamp}.svg"
+
+        # Upload the new SVG content
+        blob = bucket.blob(unique_svg_filename)
         blob.upload_from_string(str(combined_svg), content_type="image/svg+xml", predefined_acl="publicRead")
         svg_url = blob.public_url
 

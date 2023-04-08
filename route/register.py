@@ -1,11 +1,13 @@
 import asyncio
 import os
+import tempfile
+
 from fastapi import BackgroundTasks
 from fastapi import APIRouter, HTTPException
 from firebase_admin import auth
 from fastapi.responses import JSONResponse
 from auth.config import users_ref
-from background_task.generate_catalog import perform_background_tasks
+from background_task.generate_catalog import perform_background_tasks, send_email_with_all_qr_codes
 from mail.postmark import send_email_with_qr_code
 from pdf.generate_pdf import generate_svg
 from qr.qr_code_proccess import generate_qr_code
@@ -48,13 +50,24 @@ async def register_user(user: UserRegistration):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-
-
 @router.post("/bulk_register/")
 async def bulk_register_users(background_tasks: BackgroundTasks, request: BulkRegisterRequest):
     if request.count < 1 or request.count > 1000:
         return JSONResponse(status_code=400, content={"detail": "Count must be between 1 and 1000"})
 
-    background_tasks.add_task(perform_background_tasks, request)
+    total_count = request.count * request.cycle
 
-    return {"message": "QR Oluşturma işlemi info@qrpark.com.tr adresine iletilecektir."}
+    # Calculate the number of chunks
+    chunk_size = 30
+    num_chunks = (total_count + chunk_size - 1) // chunk_size
+
+    # Create a temporary directory to store the generated SVG files
+    with tempfile.TemporaryDirectory() as temp_dir:
+        svg_file_paths = []
+
+        for i in range(num_chunks):
+            background_tasks.add_task(perform_background_tasks, request, i * chunk_size, min((i + 1) * chunk_size, total_count), temp_dir, svg_file_paths)
+
+        background_tasks.add_task(send_email_with_all_qr_codes, request.customer, temp_dir, svg_file_paths)
+
+    return {"message": "QR Oluşturma işlemi info@qrpark.com.tr adresine iletilecek"}
