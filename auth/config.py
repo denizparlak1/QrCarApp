@@ -10,6 +10,7 @@ load_dotenv()
 firebase_json_path = os.environ['FIREBASE_KEY']
 database_url = os.environ['FIREBASE_DATABASE_URL']
 bucket_name = os.environ['BUCKET']
+corp_bucket_name = os.environ['CORP_BUCKET']
 
 storage_client = storage.Client()
 bucket = storage_client.get_bucket(bucket_name)
@@ -28,8 +29,10 @@ initialize_app(cred, {
 
 storage_client = storage.Client.from_service_account_json(temp_file_path)
 bucket = storage_client.get_bucket(bucket_name)
-
+corp_bucket = storage_client.get_bucket(corp_bucket_name)
 users_ref = db.reference('users')
+corp_ref = db.reference('corporate')
+
 
 
 

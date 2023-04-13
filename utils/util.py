@@ -4,15 +4,18 @@ import random
 import string
 
 
-async def set_custom_claims(uid, role):
+async def set_custom_claims(uid, role, corporation_name=None):
     try:
         # Set custom user claims
         custom_claims = {
             "role": role
         }
+        if corporation_name:
+            custom_claims["corporation_name"] = corporation_name
         auth.set_custom_user_claims(uid, custom_claims)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 
 def generate_random_email_password(domain="example.com"):

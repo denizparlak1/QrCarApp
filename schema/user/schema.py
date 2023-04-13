@@ -39,3 +39,7 @@ class UpdateUserWhatsappPermission(BaseUpdateUser):
 
 class UpdateUserPhonePermission(BaseUpdateUser):
     permission: bool
+
+
+class UpdateUserNamePermission(BaseUpdateUser):
+    permission: bool
