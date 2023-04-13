@@ -43,3 +43,7 @@ class UpdateUserPhonePermission(BaseUpdateUser):
 
 class UpdateUserNamePermission(BaseUpdateUser):
     permission: bool
+
+
+class UpdateUserSMSPermission(BaseUpdateUser):
+    permission: bool

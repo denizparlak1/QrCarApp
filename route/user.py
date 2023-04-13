@@ -7,7 +7,7 @@ from auth.config import users_ref
 from convertapi.test_cloud_convert import convert_html_to_png_example
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
-    BaseUpdateUser
+    BaseUpdateUser, UpdateUserSMSPermission
 from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
 router = APIRouter()
@@ -30,7 +30,8 @@ async def get_user(userId: str):
                 'first_login': user_data.get('first_login'),
                 'name': user_data.get('name'),
                 'surname': user_data.get('surname'),
-                'name_permission': user_data.get('name_permission')}
+                'name_permission': user_data.get('name_permission'),
+                'sms_permission': user_data.get('sms_permission')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -131,6 +132,15 @@ async def update_phone_permission_api(user: UpdateUserNamePermission):
     try:
         users_ref.child(user.user_id).update({"phone_permission": user.permission})
         return {"message": "Telefon Arama İzni Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/user/update/sms/permission/")
+async def update_sms_permission_api(user: UpdateUserSMSPermission):
+    try:
+        users_ref.child(user.user_id).update({"sms_permission": user.permission})
+        return {"message": "SMS İzni Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
