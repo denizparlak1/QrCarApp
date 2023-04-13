@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import auth.config
-from route import register, user, admin
+from route import register, user, admin, corp
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -24,3 +24,4 @@ app.add_middleware(
 app.include_router(register.router)
 app.include_router(user.router)
 app.include_router(admin.router)
+app.include_router(corp.router)

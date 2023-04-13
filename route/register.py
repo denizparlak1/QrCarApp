@@ -11,10 +11,24 @@ from background_task.generate_catalog import perform_background_tasks, send_emai
 from mail.postmark import send_email_with_qr_code
 from pdf.generate_pdf import generate_svg
 from qr.qr_code_proccess import generate_qr_code
-from schema.firebase.UserRegistration import UserRegistration, BulkRegisterRequest
+from schema.firebase.UserRegistration import UserRegistration, BulkRegisterRequest, AdminRegistration
 from utils.util import set_custom_claims, generate_random_email_password
 
 router = APIRouter()
+
+
+@router.post('/admin/register/')
+async def admin_register(user: AdminRegistration):
+    try:
+        new_user = auth.create_user(
+            email=user.email,
+            password=user.password
+        )
+        await set_custom_claims(new_user.uid, user.role)
+
+        return True
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/register/")
@@ -66,7 +80,8 @@ async def bulk_register_users(background_tasks: BackgroundTasks, request: BulkRe
         svg_file_paths = []
 
         for i in range(num_chunks):
-            background_tasks.add_task(perform_background_tasks, request, i * chunk_size, min((i + 1) * chunk_size, total_count), temp_dir, svg_file_paths)
+            background_tasks.add_task(perform_background_tasks, request, i * chunk_size,
+                                      min((i + 1) * chunk_size, total_count), temp_dir, svg_file_paths)
 
         background_tasks.add_task(send_email_with_all_qr_codes, request.customer, temp_dir, svg_file_paths)
 

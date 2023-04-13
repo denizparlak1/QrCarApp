@@ -24,6 +24,8 @@ async def create_single_user(request):
 
         user_data = {
             "email": email,
+            "name": "",
+            "surname": "",
             "userId": new_user.uid,
             "qr_code_file": qr_code_file,
             "message": "Kahve almaya çıktım 10 dakikaya döneceğim",
@@ -34,10 +36,12 @@ async def create_single_user(request):
             "telegram_permission": True,
             "whatsapp_permission": True,
             "phone_permission": True,
-            "first_login": True
+            "first_login": True,
+            "name_permission": True
         }
 
         users_ref.child(new_user.uid).set(user_data)
+
         return {"email": email, "password": password, "qr_code_file": qr_code_file}
 
     except Exception as e:

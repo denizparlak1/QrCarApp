@@ -6,7 +6,7 @@ from firebase_admin import auth
 from auth.config import users_ref
 from convertapi.test_cloud_convert import convert_html_to_png_example
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
-    UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserPhonePermission, UpdateUserWhatsappPermission, \
+    UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
     BaseUpdateUser
 from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
 
@@ -27,7 +27,10 @@ async def get_user(userId: str):
                 'telegram_permission': user_data.get('telegram_permission'),
                 'whatsapp_permission': user_data.get('whatsapp_permission'),
                 'phone_permission': user_data.get('phone_permission'),
-                'first_login': user_data.get('first_login')}
+                'first_login': user_data.get('first_login'),
+                'name': user_data.get('name'),
+                'surname': user_data.get('surname'),
+                'name_permission': user_data.get('name_permission')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -105,6 +108,15 @@ async def update_telegram_permission_api(user: UpdateUserTelegramPermission):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.put("/user/update/name/permission/")
+async def update_name_permission_api(user: UpdateUserNamePermission):
+    try:
+        users_ref.child(user.user_id).update({"name_permission": user.permission})
+        return {"message": "İsim İzni Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @router.put("/user/update/whatsapp/permission/")
 async def update_whatsapp_permission_api(user: UpdateUserWhatsappPermission):
     try:
@@ -115,7 +127,7 @@ async def update_whatsapp_permission_api(user: UpdateUserWhatsappPermission):
 
 
 @router.put("/user/update/phone/permission/")
-async def update_phone_permission_api(user: UpdateUserPhonePermission):
+async def update_phone_permission_api(user: UpdateUserNamePermission):
     try:
         users_ref.child(user.user_id).update({"phone_permission": user.permission})
         return {"message": "Telefon Arama İzni Güncellendi"}
@@ -130,7 +142,6 @@ async def update_user_login_permission_api(user: BaseUpdateUser):
         return {"message": "Kayıt İşlemi Tamamlandı"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
 
 
 @router.delete("/users/delete/")
