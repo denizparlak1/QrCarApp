@@ -17,12 +17,8 @@ async def set_custom_claims(uid, role, corporation_name=None):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-
 def generate_random_email_password(domain="example.com"):
     random_string = ''.join(random.choices(string.ascii_lowercase, k=8))
     email = f"{random_string}@{domain}"
     password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     return email, password
-
-
-

@@ -1,14 +1,11 @@
 from uuid import uuid4
-
 from fastapi import APIRouter, HTTPException, UploadFile
-
 from firebase_admin import auth
 from auth.config import users_ref
-from convertapi.test_cloud_convert import convert_html_to_png_example
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
     BaseUpdateUser, UpdateUserSMSPermission
-from storage.firebase_storage import upload_to_firebase_storage, upload_to_gcs
+from storage.firebase_storage import upload_to_gcs
 
 router = APIRouter()
 

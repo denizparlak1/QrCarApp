@@ -1,34 +1,16 @@
-import asyncio
 import os
 import tempfile
-
 from fastapi import BackgroundTasks
 from fastapi import APIRouter, HTTPException
 from firebase_admin import auth
 from fastapi.responses import JSONResponse
 from auth.config import users_ref
 from background_task.generate_catalog import perform_background_tasks, send_email_with_all_qr_codes
-from mail.postmark import send_email_with_qr_code
-from pdf.generate_pdf import generate_svg
 from qr.qr_code_proccess import generate_qr_code
-from schema.firebase.UserRegistration import UserRegistration, BulkRegisterRequest, AdminRegistration
-from utils.util import set_custom_claims, generate_random_email_password
+from schema.firebase.UserRegistration import UserRegistration, BulkRegisterRequest
+from utils.util import set_custom_claims
 
 router = APIRouter()
-
-
-@router.post('/admin/register/')
-async def admin_register(user: AdminRegistration):
-    try:
-        new_user = auth.create_user(
-            email=user.email,
-            password=user.password
-        )
-        await set_custom_claims(new_user.uid, user.role)
-
-        return True
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/register/")

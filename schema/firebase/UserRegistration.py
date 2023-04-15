@@ -19,3 +19,9 @@ class BulkRegisterRequest(BaseModel):
     count: int
     role: str
     cycle: int
+
+
+class SampleRegisterRequest(BaseModel):
+    customer: str
+    count: int
+    role: str

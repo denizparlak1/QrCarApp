@@ -1,16 +1,14 @@
 import asyncio
 import os
 import zipfile
-
 from fastapi import HTTPException
 from firebase_admin import auth
 from httpx import AsyncClient
-
 from auth.config import users_ref, bucket
 from mail.postmark import send_email_with_qr_code
 from pdf.generate_pdf import generate_svg
 from qr.qr_code_proccess import generate_qr_code
-from schema.firebase.UserRegistration import UserRegistration, BulkRegisterRequest
+from schema.firebase.UserRegistration import BulkRegisterRequest, SampleRegisterRequest
 from utils.util import set_custom_claims, generate_random_email_password
 
 
@@ -37,7 +35,8 @@ async def create_single_user(request):
             "whatsapp_permission": True,
             "phone_permission": True,
             "first_login": True,
-            "name_permission": True
+            "name_permission": True,
+            "message_permission": True
         }
 
         users_ref.child(new_user.uid).set(user_data)
@@ -86,3 +85,15 @@ async def send_email_with_all_qr_codes(customer: str, temp_dir: str, svg_file_pa
 
     # Send email with the ZIP archive
     await send_email_with_qr_code(zip_url, customer)
+
+
+#async def create_sample_qr_background(user: SampleRegisterRequest):
+#    user_data_list = []
+#    for i in range(user.count):
+#        # Create a new SampleRegisterRequest instance for each user
+#        single_user_request = SampleRegisterRequest(customer=user.customer, role=user.role)
+#        user_data = await create_single_user(single_user_request)
+#        user_data_list.append(user_data)
+#
+#    svg_url = await generate_svg(user_data_list, user.customer)
+#    return svg_url

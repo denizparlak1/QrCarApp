@@ -8,7 +8,6 @@ app = FastAPI()
 origins = [
     #"https://qrpark.com.tr",
     "https://www.qrpark.com.tr",
-    #"http://192.168.1.54:19000"
     "*"
 ]
 

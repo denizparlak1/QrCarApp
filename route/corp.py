@@ -29,8 +29,6 @@ async def register_user(user: UserRegistration):
             "phone": "XXX XXX XXXX",
         }
 
-        corporate.child().child(user_id).set(user_data)
-
         return True
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
