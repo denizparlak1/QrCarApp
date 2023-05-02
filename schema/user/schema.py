@@ -9,6 +9,10 @@ class UpdateUserPassword(BaseUpdateUser):
     password: str
 
 
+class UpdateOnboardingPermission(BaseUpdateUser):
+    first_login: bool
+
+
 class UpdateUserPhone(BaseUpdateUser):
     phone: str
 

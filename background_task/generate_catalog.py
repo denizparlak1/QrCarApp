@@ -87,13 +87,20 @@ async def send_email_with_all_qr_codes(customer: str, temp_dir: str, svg_file_pa
     await send_email_with_qr_code(zip_url, customer)
 
 
-#async def create_sample_qr_background(user: SampleRegisterRequest):
-#    user_data_list = []
-#    for i in range(user.count):
-#        # Create a new SampleRegisterRequest instance for each user
-#        single_user_request = SampleRegisterRequest(customer=user.customer, role=user.role)
-#        user_data = await create_single_user(single_user_request)
-#        user_data_list.append(user_data)
-#
-#    svg_url = await generate_svg(user_data_list, user.customer)
-#    return svg_url
+async def create_sample_qr_background(request: SampleRegisterRequest):
+    tasks = [create_single_user(request) for _ in range(request.count)]
+    user_data_list = await asyncio.gather(*tasks)
+
+    customer = request.customer.replace(" ", "_")
+    svg_url = await generate_svg(user_data_list, customer)
+    print(svg_url)
+    return svg_url
+
+
+async def send_email_with_sample_qr_codes(customer: str,svg_url ):
+    print("email çalıştı")
+    await send_email_with_qr_code(svg_url, customer)
+
+
+
+
