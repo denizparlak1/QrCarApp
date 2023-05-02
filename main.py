@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-import auth.config
 from route import register, user, admin, corp
 from fastapi.middleware.cors import CORSMiddleware
 
