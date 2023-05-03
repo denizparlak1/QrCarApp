@@ -35,7 +35,8 @@ async def register_user(user: UserRegistration):
             "telegram_permission": True,
             "whatsapp_permission": True,
             "phone_permission": True,
-            "first_login": True
+            "first_login": True,
+            "name_permission": False
         }
 
         # Set data in the Realtime Database
