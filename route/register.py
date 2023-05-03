@@ -35,6 +35,7 @@ async def register_user(user: UserRegistration):
             "telegram_permission": True,
             "whatsapp_permission": True,
             "phone_permission": True,
+            "sms_permission": False,
             "first_login": True,
             "name_permission": False
         }
