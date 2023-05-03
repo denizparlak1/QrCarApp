@@ -25,8 +25,7 @@ async def get_user(userId: str):
                 'whatsapp_permission': user_data.get('whatsapp_permission'),
                 'phone_permission': user_data.get('phone_permission'),
                 'first_login': user_data.get('first_login'),
-                'name': user_data.get('name'),
-                'surname': user_data.get('surname'),
+                'fullname': user_data.get('fullname'),
                 'name_permission': user_data.get('name_permission'),
                 'sms_permission': user_data.get('sms_permission'),
                 'userId': user_data.get('userId')}
