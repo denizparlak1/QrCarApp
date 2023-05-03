@@ -4,7 +4,7 @@ from firebase_admin import auth
 from auth.config import users_ref
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
-    BaseUpdateUser, UpdateUserSMSPermission, UpdateOnboardingPermission
+    BaseUpdateUser, UpdateUserSMSPermission, UpdateOnboardingPermission, UpdateFullName
 from storage.firebase_storage import upload_to_gcs
 
 router = APIRouter()
@@ -94,6 +94,15 @@ async def update_plate_api(user: UpdateUserPlate):
     try:
         users_ref.child(user.user_id).update({"car_plate": user.plate})
         return {"message": "Araç Plakanız Güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/user/update/fullname/")
+async def update_fullname_api(user: UpdateFullName):
+    try:
+        users_ref.child(user.user_id).update({"fullname": user.fullname})
+        return {"message": "İsim Güncellendi"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

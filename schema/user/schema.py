@@ -29,6 +29,10 @@ class UpdateUserPlate(BaseUpdateUser):
     plate: str
 
 
+class UpdateFullName(BaseUpdateUser):
+    fullname: str
+
+
 class UpdateUserTelegram(BaseUpdateUser):
     telegram: str
 

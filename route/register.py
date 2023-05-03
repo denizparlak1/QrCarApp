@@ -26,6 +26,7 @@ async def register_user(user: UserRegistration):
         user_data = {
             "email": user.email,
             "userId": new_user.uid,
+            "fullname": "",
             "qr_code_file": qr_code_file,
             "message": "Kahve almaya çıktım 10 dakikaya döneceğim",
             "phone": "XXX XXX XXXX",
