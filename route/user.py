@@ -4,7 +4,7 @@ from firebase_admin import auth
 from auth.config import users_ref
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
-    BaseUpdateUser, UpdateUserSMSPermission, UpdateOnboardingPermission
+    BaseUpdateUser, UpdateUserSMSPermission
 from storage.firebase_storage import upload_to_gcs
 
 router = APIRouter()
@@ -60,7 +60,7 @@ async def update_phone_api(user: UpdateUserPhone):
 
 
 @router.put("/user/update/onboarding/permission/")
-async def update_onboarding_api(user: UpdateOnboardingPermission):
+async def update_onboarding_api(user: BaseUpdateUser):
     try:
         users_ref.child(user.user_id).update({"first_login": False})
         return True
