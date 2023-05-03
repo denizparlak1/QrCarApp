@@ -28,7 +28,8 @@ async def get_user(userId: str):
                 'name': user_data.get('name'),
                 'surname': user_data.get('surname'),
                 'name_permission': user_data.get('name_permission'),
-                'sms_permission': user_data.get('sms_permission')}
+                'sms_permission': user_data.get('sms_permission'),
+                'userId': user_data.get('userId')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
