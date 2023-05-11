@@ -1,10 +1,15 @@
 from uuid import uuid4
+
+import requests
 from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi.openapi.models import Response
 from firebase_admin import auth
+from starlette.responses import StreamingResponse
+
 from auth.config import users_ref
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
-    BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName
+    BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL
 from storage.firebase_storage import upload_to_gcs
 
 router = APIRouter()
@@ -167,6 +172,26 @@ async def update_user_login_permission_api(user: BaseUpdateUser):
         return {"message": "Kayıt İşlemi Tamamlandı"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/user/qr/download/")
+async def download_file(url: DownloadQrFileURL):
+    try:
+        response = requests.get(url.url)
+        if response.status_code == 200:
+            content_disposition = response.headers.get("content-disposition")
+            if content_disposition:
+                file_name = content_disposition.split("filename=")[-1].strip('"')
+            else:
+                file_name = "qr.svg"
+
+            return StreamingResponse(
+                response.iter_content(chunk_size=128),
+                media_type="image/svg+xml",
+                headers={"Content-Disposition": f"attachment; filename={file_name}"},
+            )
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @router.delete("/users/delete/")
