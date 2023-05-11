@@ -174,7 +174,7 @@ async def update_user_login_permission_api(user: BaseUpdateUser):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/user/qr/download/")
+@router.post("/user/qr/download/")
 async def download_file(url: DownloadQrFileURL):
     try:
         response = requests.get(url.url)
