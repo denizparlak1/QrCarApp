@@ -6,11 +6,11 @@ from fastapi.openapi.models import Response
 from firebase_admin import auth
 from starlette.responses import StreamingResponse
 import cairosvg
-from auth.config import users_ref
+from auth.config import users_ref, storage_client, bucket
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
     BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL
-from storage.firebase_storage import upload_to_gcs
+from storage.firebase_storage import upload_to_gcs, upload_gcs_device_qr
 
 router = APIRouter()
 
@@ -175,9 +175,9 @@ async def update_user_login_permission_api(user: BaseUpdateUser):
 
 
 @router.post("/user/qr/download/")
-async def download_file(url: DownloadQrFileURL):
+async def download_file(user: DownloadQrFileURL):
     try:
-        response = requests.get(url.url)
+        response = requests.get(user.url)
         if response.status_code == 200:
             content_disposition = response.headers.get("content-disposition")
             if content_disposition:
@@ -189,11 +189,7 @@ async def download_file(url: DownloadQrFileURL):
             svg_data = response.content
             jpg_data = cairosvg.svg2png(bytestring=svg_data)
 
-            return StreamingResponse(
-                iter([jpg_data]),  # Pass the jpg data as an iterable
-                media_type="image/jpeg",
-                headers={"Content-Disposition": f"attachment; filename={file_name}"},
-            )
+            return upload_gcs_device_qr(jpg_data, file_name, user.user_id)
         else:
             raise HTTPException(status_code=400, detail="Could not download file")
     except Exception as e:

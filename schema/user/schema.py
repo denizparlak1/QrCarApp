@@ -52,5 +52,6 @@ class UpdateUserNamePermission(BaseUpdateUser):
 class UpdateUserSMSPermission(BaseUpdateUser):
     permission: bool
 
-class DownloadQrFileURL(BaseModel):
+
+class DownloadQrFileURL(BaseUpdateUser):
     url: str
