@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi.openapi.models import Response
 from firebase_admin import auth
 from starlette.responses import StreamingResponse
-
+import cairosvg
 from auth.config import users_ref
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
@@ -181,15 +181,21 @@ async def download_file(url: DownloadQrFileURL):
         if response.status_code == 200:
             content_disposition = response.headers.get("content-disposition")
             if content_disposition:
-                file_name = content_disposition.split("filename=")[-1].strip('"')
+                file_name = content_disposition.split("filename=")[-1].strip('"').replace('.svg', '.jpg')
             else:
-                file_name = "qr.svg"
+                file_name = "qr.jpg"
+
+            # Convert SVG to JPG
+            svg_data = response.content
+            jpg_data = cairosvg.svg2png(bytestring=svg_data)
 
             return StreamingResponse(
-                response.iter_content(chunk_size=128),
-                media_type="image/svg+xml",
+                iter([jpg_data]),  # Pass the jpg data as an iterable
+                media_type="image/jpeg",
                 headers={"Content-Disposition": f"attachment; filename={file_name}"},
             )
+        else:
+            raise HTTPException(status_code=400, detail="Could not download file")
     except Exception as e:
         return {"error": str(e)}
 
