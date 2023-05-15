@@ -55,3 +55,11 @@ class UpdateUserSMSPermission(BaseUpdateUser):
 
 class DownloadQrFileURL(BaseUpdateUser):
     url: str
+
+
+class NotificationMessages(BaseUpdateUser):
+    message: str
+
+
+class DeviceIdStore(BaseUpdateUser):
+    device_id: str

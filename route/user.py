@@ -3,13 +3,13 @@ from uuid import uuid4
 import requests
 from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi.openapi.models import Response
-from firebase_admin import auth
+from firebase_admin import auth, messaging
 from starlette.responses import StreamingResponse
 import cairosvg
 from auth.config import users_ref, storage_client, bucket
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
-    BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL
+    BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL, NotificationMessages, DeviceIdStore
 from storage.firebase_storage import upload_to_gcs, upload_gcs_device_qr
 
 router = APIRouter()
@@ -195,6 +195,43 @@ async def download_file(user: DownloadQrFileURL):
     except Exception as e:
         return {"error": str(e)}
 
+
+@router.post("/users/save/device/id/")
+async def save_device_id(user: DeviceIdStore):
+    try:
+        users_ref.child(user.user_id).update({"device_id": user.device_id})
+        return {"success": True, "message": "Device ID saved successfully."}
+    except Exception as e:
+        return {"success": False, "message": f"Failed to save device ID: {str(e)}"}
+
+
+#@router.post("/users/notification/save/")
+#async def save_notification_message_api(user: NotificationMessages):
+#    try:
+#        user_ref = users_ref.child(user.user_id)
+#        new_message_ref = user_ref.child('notification').push()
+#        unique_key = new_message_ref.key
+#        new_message_ref.set(user.message)
+#
+#        # Send push notification to the user
+#        fcm_token = retrieve_user_fcm_token(user.user_id)  # Retrieve the user's FCM token from the database
+#        if fcm_token:
+#            message = messaging.Message(
+#                notification=messaging.Notification(
+#                    title='New Message',
+#                    body=user.message
+#                ),
+#                token=fcm_token
+#            )
+#            response = messaging.send(message)
+#            print('Push notification sent successfully')
+#        else:
+#            print('FCM token not found for the user')
+#
+#        return {"success": True, "message": "Notification message saved successfully."}
+#    except Exception as e:
+#        return {"success": False, "message": f"Failed to save notification message: {str(e)}"}
+#
 
 @router.delete("/users/delete/")
 async def delete_all_users():

@@ -1,7 +1,7 @@
 import os
 import tempfile
 from dotenv import load_dotenv
-from firebase_admin import credentials, initialize_app, firestore, db
+from firebase_admin import credentials, initialize_app, firestore, db,messaging
 from google.cloud import storage
 
 load_dotenv()
