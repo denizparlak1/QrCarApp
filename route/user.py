@@ -11,6 +11,7 @@ from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPas
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
     BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL, NotificationMessages, DeviceIdStore
 from storage.firebase_storage import upload_to_gcs, upload_gcs_device_qr
+from utils.util import retrieve_user_device_id
 
 router = APIRouter()
 
@@ -36,6 +37,15 @@ async def get_user(userId: str):
                 'userId': user_data.get('userId')}
     else:
         raise HTTPException(status_code=404, detail="User not found")
+
+
+@router.get('/users/{userId}/device/id/')
+async def get_user_device_id_api(userId: str):
+    try:
+        device_id = users_ref.child(userId).child('device_id').get()
+        return {"id": device_id}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @router.put("/users/add/avatar/{userId}")
@@ -205,33 +215,37 @@ async def save_device_id(user: DeviceIdStore):
         return {"success": False, "message": f"Failed to save device ID: {str(e)}"}
 
 
-#@router.post("/users/notification/save/")
-#async def save_notification_message_api(user: NotificationMessages):
-#    try:
-#        user_ref = users_ref.child(user.user_id)
-#        new_message_ref = user_ref.child('notification').push()
-#        unique_key = new_message_ref.key
-#        new_message_ref.set(user.message)
-#
-#        # Send push notification to the user
-#        fcm_token = retrieve_user_fcm_token(user.user_id)  # Retrieve the user's FCM token from the database
-#        if fcm_token:
-#            message = messaging.Message(
-#                notification=messaging.Notification(
-#                    title='New Message',
-#                    body=user.message
-#                ),
-#                token=fcm_token
-#            )
-#            response = messaging.send(message)
-#            print('Push notification sent successfully')
-#        else:
-#            print('FCM token not found for the user')
-#
-#        return {"success": True, "message": "Notification message saved successfully."}
-#    except Exception as e:
-#        return {"success": False, "message": f"Failed to save notification message: {str(e)}"}
-#
+from exponent_server_sdk import PushClient
+from exponent_server_sdk import PushMessage
+
+
+@router.post("/users/notification/save/")
+async def save_notification_message_api(user: NotificationMessages):
+    try:
+        user_ref = users_ref.child(user.user_id)
+        new_message_ref = user_ref.child('notification').push()
+        unique_key = new_message_ref.key
+        new_message_ref.set(user.message)
+
+        # Send push notification to the user
+
+        expo_push_token = retrieve_user_device_id(user.user_id)  # Retrieve the user's Expo push token from the database
+        if expo_push_token:
+            message = PushMessage(
+                to=expo_push_token,
+                title='New Message',
+                body=user.message
+            )
+            response = PushClient().publish(message)
+            print(response)
+            print('Push notification sent successfully')
+        else:
+            print('Expo push token not found for the user')
+
+        return {"success": True, "message": "Notification message saved successfully."}
+    except Exception as e:
+        return {"success": False, "message": f"Failed to save notification message: {str(e)}"}
+
 
 @router.delete("/users/delete/")
 async def delete_all_users():
