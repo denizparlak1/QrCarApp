@@ -63,3 +63,7 @@ class NotificationMessages(BaseUpdateUser):
 
 class DeviceIdStore(BaseUpdateUser):
     device_id: str
+
+
+class InAppPurchase(BaseUpdateUser):
+    count: int

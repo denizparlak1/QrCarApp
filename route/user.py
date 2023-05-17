@@ -7,11 +7,14 @@ from firebase_admin import auth, messaging
 from starlette.responses import StreamingResponse
 import cairosvg
 from auth.config import users_ref, storage_client, bucket
+#from notification.aws_config import sns_client
+#from notification.twillo_config import client
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
-    BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL, NotificationMessages, DeviceIdStore
+    BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL, NotificationMessages, DeviceIdStore, \
+    InAppPurchase
 from storage.firebase_storage import upload_to_gcs, upload_gcs_device_qr
-from utils.util import retrieve_user_device_id
+from utils.util import retrieve_user_device_id, retrieve_user_phone
 
 router = APIRouter()
 
@@ -215,36 +218,37 @@ async def save_device_id(user: DeviceIdStore):
         return {"success": False, "message": f"Failed to save device ID: {str(e)}"}
 
 
-from exponent_server_sdk import PushClient
-from exponent_server_sdk import PushMessage
-
-
-@router.post("/users/notification/save/")
-async def save_notification_message_api(user: NotificationMessages):
+@router.put("/user/purchase/message/")
+async def save_purchase_count(user: InAppPurchase):
     try:
-        user_ref = users_ref.child(user.user_id)
-        new_message_ref = user_ref.child('notification').push()
-        unique_key = new_message_ref.key
-        new_message_ref.set(user.message)
-
-        # Send push notification to the user
-
-        expo_push_token = retrieve_user_device_id(user.user_id)  # Retrieve the user's Expo push token from the database
-        if expo_push_token:
-            message = PushMessage(
-                to=expo_push_token,
-                title='New Message',
-                body=user.message
-            )
-            response = PushClient().publish(message)
-            print(response)
-            print('Push notification sent successfully')
-        else:
-            print('Expo push token not found for the user')
-
-        return {"success": True, "message": "Notification message saved successfully."}
+        users_ref.child(user.user_id).update({"private_message": user.private_message})
+        return {"success": True, "message": "Purchase Successfully Updated."}
     except Exception as e:
-        return {"success": False, "message": f"Failed to save notification message: {str(e)}"}
+        return {"success": False, "message": f"Failed to save Purchase: {str(e)}"}
+
+
+
+#@router.post("/users/notification/send/")
+#async def send_sms_api(user: NotificationMessages):
+#    try:
+#        user_ref = users_ref.child(user.user_id)
+#        new_message_ref = user_ref.child('notification').push()
+#        unique_key = new_message_ref.key
+#        new_message_ref.set(user.message)
+#
+#        # Send SMS notification to the user
+#        user_phone = retrieve_user_phone(user.user_id)
+#
+#        message = client.messages.create(
+#            body=user.message,
+#            from_="+12542697112",
+#            to=user_phone
+#        )
+#        print(message.sid)
+#
+#        return {'success': True, 'message': 'SMS notification sent successfully'}
+#    except Exception as e:
+#        return {'success': False, 'message': str(e)}
 
 
 @router.delete("/users/delete/")

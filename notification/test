@@ -1,0 +1,7 @@
+                <TouchableOpacity
+                    style={styles.logoutButton}
+                    onPress={handleLogout}
+                >
+                    <AntDesign name="logout" size={20} color="#FFFFFF" />
+                    <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
+                </TouchableOpacity>

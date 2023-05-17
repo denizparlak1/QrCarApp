@@ -32,8 +32,19 @@ def retrieve_user_device_id(user_id: str) -> Optional[str]:
     try:
         # Retrieve the device_id from the user data using user_id
         device_id = users_ref.child(user_id).child('device_id').get()
-        print(device_id)
+
         return device_id
     except Exception as e:
         print(f"Failed to retrieve device ID: {str(e)}")
+        return None
+
+
+def retrieve_user_phone(user_id: str) -> Optional[str]:
+    try:
+        # Retrieve the device_id from the user data using user_id
+        phone = users_ref.child(user_id).child('phone').get()
+
+        return phone
+    except Exception as e:
+        print(f"Failed to retrieve phone: {str(e)}")
         return None
