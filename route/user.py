@@ -12,7 +12,7 @@ from auth.config import users_ref, storage_client, bucket
 from schema.user.schema import UpdateUserMessage, UpdateUserPhone, UpdateUserPassword, UpdateUserEmail, UpdateUserPlate, \
     UpdateUserTelegram, UpdateUserTelegramPermission, UpdateUserNamePermission, UpdateUserWhatsappPermission, \
     BaseUpdateUser, UpdateUserSMSPermission, UpdateFullName, DownloadQrFileURL, NotificationMessages, DeviceIdStore, \
-    InAppPurchase, DeleteAccount
+    InAppPurchase
 from storage.firebase_storage import upload_to_gcs, upload_gcs_device_qr
 from utils.util import retrieve_user_device_id, retrieve_user_phone
 
@@ -42,20 +42,6 @@ async def get_user(userId: str):
         raise HTTPException(status_code=404, detail="User not found")
 
 
-@router.delete("/user/delete/account/")
-async def delete_user(user_data: DeleteAccount):
-    try:
-        # Retrieve the user by email
-        user = auth.get_user_by_email(user_data.email)
-        user_id = user.uid
-
-        # Delete the user from Firebase Authentication
-        auth.delete_user(user_id)
-
-        return {"message": "User deleted successfully"}
-    except Exception as e:
-        return {"error": str(e)}
-
 @router.get('/users/{userId}/device/id/')
 async def get_user_device_id_api(userId: str):
     try:
@@ -63,16 +49,6 @@ async def get_user_device_id_api(userId: str):
         return {"id": device_id}
     except Exception as e:
         return {"error": str(e)}
-
-
-@router.post('/users/{userId}/device/id/')
-async def get_user_device_id_api(userId: str):
-    try:
-        device_id = users_ref.child(userId).child('device_id').get()
-        return {"id": device_id}
-    except Exception as e:
-        return {"error": str(e)}
-
 
 
 @router.put("/users/add/avatar/{userId}")

@@ -67,7 +67,3 @@ class DeviceIdStore(BaseUpdateUser):
 
 class InAppPurchase(BaseUpdateUser):
     count: int
-
-
-class DeleteAccount(BaseModel):
-    email: str
