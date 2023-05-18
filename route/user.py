@@ -52,6 +52,8 @@ async def delete_user(user_data: DeleteAccount):
         # Delete the user from Firebase Authentication
         auth.delete_user(user_id)
 
+        users_ref.child(user_id).delete()
+
         return {"message": "User deleted successfully"}
     except Exception as e:
         return {"error": str(e)}
